@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blocks-sinacor-node
+  labels:
+    app: blocks-sinacor-node
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: blocks-sinacor-node
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: blocks-sinacor-node
+    spec:
+      serviceAccountName: blocks-sinacor-node-service-account
+      initContainers:
+      - name: dep-blocks-execution-service-readiness
+        image: busybox:stable
+        command: ['sh', '-c', 
+          'echo -e "Checking for the availability of blocks-execution-service deployment"; 
+          while ! nc -z blocks-execution-service 8081; 
+          do sleep 1; printf "-"; 
+          done; 
+          echo -e "  >>blocks-execution-service has started";']
+      - name: dep-blocks-files-service-readiness
+        image: busybox:stable
+        command: ['sh', '-c', 
+          'echo -e "Checking for the availability of blocks-files-service deployment"; 
+          while ! nc -z blocks-files-service 8085; 
+          do sleep 1; printf "-"; 
+          done; 
+          echo -e "  >>blocks-files-service has started";']
+      containers:
+      - name: blocks-sinacor-node
+        image: registry.vericode.com.br/dott-ai-sinacor-node-k8s:0.0.38
+        ports:
+        - containerPort: 8080

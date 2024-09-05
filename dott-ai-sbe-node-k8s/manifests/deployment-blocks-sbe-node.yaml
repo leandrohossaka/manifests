@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blocks-sbe-node
+  labels:
+    app: blocks-sbe-node
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: blocks-sbe-node
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: blocks-sbe-node
+    spec:
+      serviceAccountName: blocks-sbe-node-service-account
+      containers:
+      - name: blocks-sbe-node
+        image: us.gcr.io/dot-infra-vericode/sbe-node-k8s:1.0.13
+        ports:
+        - containerPort: 9000

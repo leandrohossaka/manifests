@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blocks-files-service  
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8085
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: blocks-files-service

@@ -1,0 +1,116 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-qa
+  annotations:
+    networking.gke.io/managed-certificates: managed-cert
+    networking.gke.io/v1beta1.FrontendConfig: ssl-redirect
+    kubernetes.io/ingress.global-static-ip-name: qa-dott-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dott-ai-web
+            port:
+              number: 31000
+    host: qa.front.dott.ai
+  - http:
+      paths:
+      - path: /api/scenery
+        pathType: Prefix
+        backend:
+          service:
+            name: scenario-service
+            port:
+              number: 31001
+      - path: /api/ws
+        pathType: Prefix
+        backend:
+          service:
+            name: streaming-service
+            port:
+              number: 31006
+      - path: /api/execution
+        pathType: Prefix
+        backend:
+          service:
+            name: scenario-service
+            port:
+              number: 31001
+      - path: /api/monitor
+        pathType: Prefix
+        backend:
+          service:
+            name: scenario-service
+            port:
+              number: 31001
+      - path: /api/template
+        pathType: Prefix
+        backend:
+          service:
+            name: scenario-service
+            port:
+              number: 31001
+      - path: /api/execution/node
+        pathType: Prefix
+        backend:
+          service:
+            name: scenario-service
+            port:
+              number: 31001
+
+      - path: /api/file
+        pathType: Prefix
+        backend:
+          service:
+            name: file-manager
+            port:
+              number: 31002
+      - path: /api/download
+        pathType: Prefix
+        backend:
+          service:
+            name: file-manager
+            port:
+              number: 31002
+      - path: /api/upload
+        pathType: Prefix
+        backend:
+          service:
+            name: file-manager
+            port:
+              number: 31002
+
+      - path: /api/features
+        pathType: Prefix
+        backend:
+          service:
+            name: config-manager
+            port:
+              number: 31003
+      - path: /api/nodetype
+        pathType: Prefix
+        backend:
+          service:
+            name: config-manager
+            port:
+              number: 31003
+      - path: /api/node
+        pathType: Prefix
+        backend:
+          service:
+            name: config-manager
+            port:
+              number: 31003
+      - path: /api/collection
+        pathType: Prefix
+        backend:
+          service:
+            name: collection-service
+            port:
+              number: 31005
+    host: qa.api.dott.ai

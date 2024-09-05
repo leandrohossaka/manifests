@@ -1,0 +1,74 @@
+
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#  name: blocks-mongodb-configmap
+#  
+# data:
+#  MONGO_INITDB_DATABASE: blocks_mongodb
+#  MONGO_INITDB_ROOT_USERNAME: users
+
+# ---
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#  name: blocks-mongodb-secret
+#  
+# data:
+#  MONGO_INITDB_ROOT_PASSWORD: dXNlcnM=
+
+# ---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: blocks-mongodb
+  name: blocks-mongodb
+  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blocks-mongodb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: blocks-mongodb
+    spec:
+      containers:
+      - image: mongo:5.0.17
+        name: mongo
+        args: ["--dbpath","/data/db"]
+        livenessProbe:
+          exec:
+            command:
+              - mongo
+              - --disableImplicitSessions
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        readinessProbe:
+          exec:
+            command:
+              - mongo
+              - --disableImplicitSessions
+              - --eval
+              - "db.adminCommand('ping')"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 6
+        # envFrom:
+        # - secretRef:
+        #     name: blocks-mongodb-secret
+        # - configMapRef:
+        #     name: blocks-mongodb-configmap

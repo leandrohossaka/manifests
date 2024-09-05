@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blocks-user-db  
+  labels:
+    app.kubernetes.io/name: blocks-user-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: blocks-user-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: blocks-user-db
+    spec:
+      volumes:
+        - name: mysql-data-disk
+          persistentVolumeClaim:
+            claimName: blocks-user-db
+      containers:
+        - name: mysql
+          image: mysql:8.0.33
+          ports:
+            - name: mysql
+              containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - name: mysql-data-disk
+              mountPath: /var/lib/mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: blocks-user-db
+                  key: mysql-root-password
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: blocks-user-db
+                  key: mysql-password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: blocks-user-db
+                  key: mysql-db-name
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: blocks-user-db
+                  key: mysql-username

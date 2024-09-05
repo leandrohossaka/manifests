@@ -1,0 +1,9 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-cert
+spec:
+  domains:
+    - dev.front.dott.ai
+    - dev.api.dott.ai
+    - dev.admin.dott.ai

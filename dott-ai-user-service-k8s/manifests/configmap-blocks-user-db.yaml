@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blocks-user-db  
+data:
+  mysql-db-name: sinacor
+  mysql-username: service

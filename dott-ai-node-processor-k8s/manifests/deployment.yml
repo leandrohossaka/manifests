@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blocks-node-processor
+  labels:
+    app: blocks-node-processor
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: blocks-node-processor
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: blocks-node-processor
+    spec:
+      initContainers:
+      - name: dep-blocks-execution-service-readiness
+        image: busybox:stable
+        command: ['sh', '-c', 
+          'echo -e "Checking for the availability of blocks-execution-service deployment"; 
+          while ! nc -z blocks-execution-service 8081; 
+          do sleep 1; printf "-"; 
+          done; 
+          echo -e "  >>blocks-execution-service has started";']
+      containers:
+      - name: blocks-node-processor
+        image: registry.vericode.com.br/sinacor.blocks.node.processor:0.0.6
+        ports:
+        - containerPort: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: blocks-node-processor  
+spec:
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8084
+      targetPort: 8080
+  selector:
+    app.kubernetes.io/name: blocks-node-processor

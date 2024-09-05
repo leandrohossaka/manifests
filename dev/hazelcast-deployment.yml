@@ -1,0 +1,55 @@
+apiVersion: hazelcast.com/v1alpha1
+kind: Hazelcast
+metadata:
+  name: hz-hazelcast
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hazelcast-managementcenter
+spec:
+  selector:
+    matchLabels:
+      app: hazelcast-managementcenter
+  template:
+    metadata:
+      labels:
+        app: hazelcast-managementcenter
+    spec:
+      containers:
+      - image: hazelcast/management-center:5.4.1
+        name: hazelcast-managementcenter
+        env:
+        - name: MC_DEFAULT_CLUSTER
+          value: dev
+        - name: MC_DEFAULT_CLUSTER_MEMBERS
+          value: hz-hazelcast
+        - name: MC_ADMIN_USER
+          value: admin
+        - name: MC_ADMIN_PASSWORD
+          value: senhasecretavalida2*
+        resources:
+          limits:
+            memory: 2048Mi
+            cpu: "2"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hazelcast-managementcenter
+  name: hazelcast-managementcenter
+spec:
+  ports:
+  - port: 31100
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: hazelcast-managementcenter
+  type: ClusterIP

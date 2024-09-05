@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-server-conf
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 1s
+      evaluation_interval: 1s
+    scrape_configs:
+      - job_name: 'dott-ai-collection-service'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['collection-service:31005']
+            labels:
+              application: 'dott-ai-collection-service'
+
+      - job_name: 'dott-ai-config-manager'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['config-manager:31003']
+            labels:
+              application: 'dott-ai-config-manager'
+
+      - job_name: 'dott-ai-cypress-engine'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['cypress-engine:31008']
+            labels:
+              application: 'dott-ai-cypress-engine'
+
+      - job_name: 'dott-ai-deploy-handler'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['deploy-handler:31009']
+            labels:
+              application: 'dott-ai-deploy-handler'
+
+      - job_name: 'dott-ai-file-manager'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['file-manager:31002']
+            labels:
+              application: 'dott-ai-file-manager'
+
+      - job_name: 'dott-ai-logger'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: ['logger:31007']
+            labels:
+              application: 'dott-ai-logger'
+
+      - job_name: 'dott-ai-performance-engine'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['performance-engine:8080']
+            labels:
+              application: 'dott-ai-performance-engine'
+
+      - job_name: 'dott-ai-scenario-service'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['scenario-service:31001']
+            labels:
+              application: 'dott-ai-scenario-service'
+
+      - job_name: 'dott-ai-streaming-service'
+        metrics_path: '/api/actuator/prometheus'
+        static_configs:
+          - targets: ['streaming-service:31006']
+            labels:
+              application: 'dott-ai-streaming-service'
+      
